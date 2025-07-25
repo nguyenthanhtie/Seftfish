@@ -1,0 +1,473 @@
+@model List<Seftfish.Models.TaiKhoan>
+@{
+    ViewData["Title"] = "DANH SÁCH NGƯỜI DÙNG";
+    ViewData["PageTitle"] = "DANH SÁCH NGƯỜI DÙNG";
+   
+    ViewData["ShowTabs"] = true;
+}
+
+@section TabNavigation {
+    <li class="nav-item me-2" role="presentation">
+        <button class="nav-link active" id="customer-list-tab" type="button" role="tab">
+            <i class="fas fa-users me-2"></i>Danh sách khách hàng
+        </button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <a class="nav-link" asp-area="Admin" asp-controller="Nguoidung" asp-action="Lichsu" role="tab">
+            <i class="fas fa-history me-2"></i>Lịch sử mua hàng
+        </a>
+    </li>
+}
+
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <span>DANH SÁCH QUẢN LÝ NGƯỜI DÚNG</span>
+        <div class="d-flex gap-2">
+            <input type="text" id="searchInput" class="form-control form-control-sm" placeholder="Tìm kiếm khách hàng..." style="width: 250px;">
+            <button class="btn btn-dark btn-sm" id="addCustomerBtn" data-bs-toggle="modal" data-bs-target="#addCustomerModal">
+                <i class="fas fa-plus me-1"></i> Thêm khách hàng
+            </button>
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table id="customerTable" class="table table-hover table-striped" style="width:100%">
+                <thead class="table-dark">
+                    <tr>
+                        <th>ID</th>
+                        <th>Ảnh</th>
+                        <th>Tên khách hàng</th>
+                        <th>Email</th>
+                        <th>Số điện thoại</th>
+                        <th>Ngày tham gia</th>
+                        <th>Trạng thái</th>
+                    </tr>
+                </thead>
+            <tbody>
+                @if (Model != null && Model.Any())
+                {
+                    @foreach (var customer in Model)
+                    {
+                        <tr class="customer-row" data-customer-id="@customer.IdTaiKhoan" style="cursor: pointer;">
+                            <td><strong class="text-primary">@customer.IdTaiKhoan</strong></td>
+                            <td>
+                                @if (!string.IsNullOrEmpty(customer.AnhDaiDien))
+                                {
+                                    <img src="@customer.AnhDaiDien" alt="Avatar" class="rounded-circle" width="40" height="40">
+                                }
+                                else
+                                {
+                                    <div class="rounded-circle bg-secondary d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                                        <i class="fas fa-user text-white"></i>
+                                    </div>
+                                }
+                            </td>
+                            <td><strong>@(customer.HoTen ?? "Chưa cập nhật")</strong></td>
+                            <td>@customer.Email</td>
+                            <td>@(customer.DiaChis?.FirstOrDefault()?.SoDienThoai ?? "Chưa cập nhật")</td>
+                            <td>@(customer.NgayTao?.ToString("dd/MM/yyyy") ?? "Chưa xác định")</td>
+                            <td>
+                                @if (customer.TrangThai == true)
+                                {
+                                    <span class="badge active-status">Hoạt động</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-warning text-dark">Tạm khóa</span>
+                                }
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="7" class="text-center py-4">
+                            <i class="fas fa-users fa-3x text-muted mb-3"></i>
+                            <h5 class="text-muted">Chưa có khách hàng nào</h5>
+                            <p class="text-muted">Bấm nút "Thêm mới" để thêm khách hàng đầu tiên</p>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        </div>
+        
+        @if (Model == null || !Model.Any())
+        {
+            <div class="text-center py-4">
+                <i class="fas fa-users fa-3x text-muted mb-3"></i>
+                <h5 class="text-muted">Chưa có khách hàng nào</h5>
+                <p class="text-muted">Bấm nút "Thêm mới" để thêm khách hàng đầu tiên</p>
+                <small class="text-muted">Debug: Tổng số tài khoản trong DB: @ViewBag.TotalAccounts</small>
+            </div>
+        }
+    </div>
+</div>
+
+@section Modals {
+    <!-- Add Customer Modal -->
+    <div class="modal fade" id="addCustomerModal" tabindex="-1" aria-labelledby="addCustomerModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addCustomerModalLabel">Thêm khách hàng mới</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="addCustomerForm">
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="newCustomerEmail" class="form-label">Email <span class="text-danger">*</span></label>
+                                    <input type="email" class="form-control" id="newCustomerEmail" name="Email" required>
+                                    <div class="invalid-feedback">Vui lòng nhập email hợp lệ.</div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="newCustomerPassword" class="form-label">Mật khẩu <span class="text-danger">*</span></label>
+                                    <input type="password" class="form-control" id="newCustomerPassword" name="MatKhau" required minlength="6">
+                                    <div class="invalid-feedback">Mật khẩu phải có ít nhất 6 ký tự.</div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="newCustomerName" class="form-label">Họ tên</label>
+                                    <input type="text" class="form-control" id="newCustomerName" name="HoTen">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="newCustomerGender" class="form-label">Giới tính</label>
+                                    <select class="form-select" id="newCustomerGender" name="GioiTinh">
+                                        <option value="">Chưa xác định</option>
+                                        <option value="Nam">Nam</option>
+                                        <option value="Nữ">Nữ</option>
+                                        <option value="Khác">Khác</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="newCustomerRole" class="form-label">Vai trò <span class="text-danger">*</span></label>
+                                    <select class="form-select" id="newCustomerRole" name="VaiTro" required>
+                                        <option value="" selected >Chọn vai trò</option>
+                                        <option value="khach">Khách hàng</option>
+                                        <option value="Admin">Quản trị viên</option>
+                                        <option value="Staff">Nhân viên</option>
+                                    </select>
+                                    <div class="invalid-feedback">Vui lòng chọn vai trò.</div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="newCustomerBirthDate" class="form-label">Ngày sinh</label>
+                                    <input type="date" class="form-control" id="newCustomerBirthDate" name="NgaySinh">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="newCustomerPhone" class="form-label">Số điện thoại</label>
+                                    <input type="tel" class="form-control" id="newCustomerPhone" name="SoDienThoai">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="newCustomerStatus" class="form-label">Trạng thái</label>
+                                    <select class="form-select" id="newCustomerStatus" name="TrangThai">
+                                        <option value="true">Hoạt động</option>
+                                        <option value="false">Tạm khóa</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save me-1"></i> Lưu khách hàng
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Customer Detail Modal -->
+    <div class="modal fade" id="customerDetailModal" tabindex="-1" aria-labelledby="customerDetailModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="customerDetailModalLabel">Chi tiết khách hàng</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-4 text-center">
+                            <img id="customerModalImage" src="" alt="Ảnh đại diện khách hàng" 
+                                 class="img-fluid rounded-circle mb-3" width="150" height="150" style="display: none;">
+                            <div id="customerModalImagePlaceholder" class="rounded-circle bg-secondary d-flex align-items-center justify-content-center mx-auto mb-3" style="width: 150px; height: 150px; display: none;">
+                                <i class="fas fa-user text-white fa-3x"></i>
+                            </div>
+                            <h4 id="customerModalName">Đang tải...</h4>
+                            <p class="text-muted">ID: <span id="customerModalId"></span></p>
+                            <div class="mb-3">
+                                <span id="customerModalStatus" class="badge rounded-pill"></span>
+                            </div>
+                            <button id="toggleStatusBtn" class="btn me-2">
+                                <i id="toggleStatusIcon" class="me-1"></i> <span id="toggleStatusText"></span>
+                            </button>
+                        </div>
+                        <div class="col-md-8">
+                            <div class="mb-3">
+                                <label class="form-label">Email</label>
+                                <input id="customerModalEmail" type="email" class="form-control" readonly>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Ngày tham gia</label>
+                                <input id="customerModalJoinDate" type="text" class="form-control" readonly>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Tổng đơn hàng</label>
+                                <input id="customerModalOrderCount" type="text" class="form-control" readonly>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Tổng chi tiêu</label>
+                                <input id="customerModalTotalSpent" type="text" class="form-control" readonly>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Simple table without DataTables to avoid column count issues
+            console.log('Page loaded, binding events...');
+            
+            // Bind events after DOM is ready
+            bindCustomerEvents();
+            
+            // Simple search functionality
+            $('#searchInput').on('keyup', function() {
+                var value = $(this).val().toLowerCase();
+                $('#customerTable tbody tr').filter(function() {
+                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+                });
+            });
+        });
+
+        function bindCustomerEvents() {
+            // View customer detail - clicking anywhere on the row
+            $('.customer-row').on('click', function() {
+                var customerId = $(this).data('customer-id');
+                loadCustomerDetail(customerId);
+            });
+
+            // Add hover effect for better UX
+            $('.customer-row').hover(
+                function() {
+                    $(this).addClass('table-active');
+                },
+                function() {
+                    $(this).removeClass('table-active');
+                }
+            );
+
+            // Toggle customer status
+            $('.btn-toggle-status').on('click', function() {
+                var customerId = $(this).data('customer-id');
+                var button = $(this);
+                
+                if (confirm('Bạn có chắc chắn muốn thay đổi trạng thái của khách hàng này?')) {
+                    $.ajax({
+                        url: '@Url.Action("ToggleStatus", "Nguoidung", new { area = "Admin" })',
+                        type: 'POST',
+                        data: { id: customerId },
+                        success: function(response) {
+                            if (response.success) {
+                                alert('Đã thay đổi trạng thái thành công!');
+                                location.reload();
+                            } else {
+                                alert('Có lỗi xảy ra: ' + response.message);
+                            }
+                        },
+                        error: function() {
+                            alert('Có lỗi xảy ra khi thay đổi trạng thái');
+                        }
+                    });
+                }
+            });
+
+            // Handle toggle status in modal
+            $(document).on('click', '#toggleStatusBtn', function() {
+                var customerId = $('#customerModalId').text();
+                
+                if (confirm('Bạn có chắc chắn muốn thay đổi trạng thái của khách hàng này?')) {
+                    $.ajax({
+                        url: '@Url.Action("ToggleStatus", "Nguoidung", new { area = "Admin" })',
+                        type: 'POST',
+                        data: { id: customerId },
+                        success: function(response) {
+                            if (response.success) {
+                                updateModalStatus(response.status);
+                                alert('Đã thay đổi trạng thái thành công!');
+                                location.reload();
+                            }
+                        },
+                        error: function() {
+                            alert('Có lỗi xảy ra khi thay đổi trạng thái');
+                        }
+                    });
+                }
+            });
+
+            // Handle add customer form
+            $('#addCustomerForm').on('submit', function(e) {
+                e.preventDefault();
+                
+                // Reset previous validation
+                $(this).find('.is-invalid').removeClass('is-invalid');
+                
+                // Validate required fields
+                var isValid = true;
+                var email = $('#newCustomerEmail').val();
+                var password = $('#newCustomerPassword').val();
+                var role = $('#newCustomerRole').val();
+                
+                if (!email || !isValidEmail(email)) {
+                    $('#newCustomerEmail').addClass('is-invalid');
+                    isValid = false;
+                }
+                
+                if (!password || password.length < 6) {
+                    $('#newCustomerPassword').addClass('is-invalid');
+                    isValid = false;
+                }
+                
+                if (!role) {
+                    $('#newCustomerRole').addClass('is-invalid');
+                    isValid = false;
+                }
+                
+                if (!isValid) {
+                    return;
+                }
+                
+                var formData = {
+                    Email: email,
+                    MatKhau: password,
+                    HoTen: $('#newCustomerName').val(),
+                    GioiTinh: $('#newCustomerGender').val(),
+                    NgaySinh: $('#newCustomerBirthDate').val(),
+                    TrangThai: $('#newCustomerStatus').val() === 'true',
+                    SoDienThoai: $('#newCustomerPhone').val(),
+                    DiaChiChiTiet: $('#newCustomerAddress').val(),
+                    VaiTro: $('#newCustomerRole').val()
+                };
+                
+                // Disable submit button
+                var submitBtn = $(this).find('button[type="submit"]');
+                var originalText = submitBtn.html();
+                submitBtn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-1"></i> Đang xử lý...');
+                
+                $.ajax({
+                    url: '@Url.Action("Create", "Nguoidung", new { area = "Admin" })',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(formData),
+                    success: function(response) {
+                        if (response.success) {
+                            alert('Thêm khách hàng thành công!');
+                            $('#addCustomerModal').modal('hide');
+                            location.reload();
+                        } else {
+                            alert('Có lỗi xảy ra: ' + response.message);
+                        }
+                    },
+                    error: function(xhr) {
+                        var error = 'Có lỗi xảy ra khi thêm khách hàng';
+                        if (xhr.responseJSON && xhr.responseJSON.message) {
+                            error = xhr.responseJSON.message;
+                        }
+                        alert(error);
+                    },
+                    complete: function() {
+                        submitBtn.prop('disabled', false).html(originalText);
+                    }
+                });
+            });
+
+            // Reset form when modal is hidden
+            $('#addCustomerModal').on('hidden.bs.modal', function() {
+                $('#addCustomerForm')[0].reset();
+                $('#addCustomerForm .is-invalid').removeClass('is-invalid');
+            });
+        }
+
+        function loadCustomerDetail(customerId) {
+            $.ajax({
+                url: '@Url.Action("GetCustomerDetail", "Nguoidung", new { area = "Admin" })',
+                type: 'GET',
+                data: { id: customerId },
+                success: function(data) {
+                    // Update modal content
+                    $('#customerModalId').text(data.id);
+                    $('#customerModalName').text(data.hoTen || 'Chưa cập nhật');
+                    $('#customerModalEmail').val(data.email);
+                    $('#customerModalJoinDate').val(data.ngayTao);
+                    $('#customerModalAddress').val(data.diaChi);
+                    $('#customerModalOrderCount').val(data.tongDonHang + ' đơn hàng');
+                    $('#customerModalTotalSpent').val(data.tongChiTieu);
+                    
+                    // Update image
+                    if (data.anhDaiDien) {
+                        $('#customerModalImage').attr('src', data.anhDaiDien).show();
+                        $('#customerModalImagePlaceholder').hide();
+                    } else {
+                        $('#customerModalImage').hide();
+                        $('#customerModalImagePlaceholder').show();
+                    }
+                    
+                    // Update status
+                    updateModalStatus(data.trangThai);
+                    
+                    // Show modal
+                    $('#customerDetailModal').modal('show');
+                },
+                error: function() {
+                    alert('Không thể tải thông tin khách hàng');
+                }
+            });
+        }
+
+        function updateModalStatus(status) {
+            var statusBadge = $('#customerModalStatus');
+            var toggleBtn = $('#toggleStatusBtn');
+            var toggleIcon = $('#toggleStatusIcon');
+            var toggleText = $('#toggleStatusText');
+            
+            if (status === 'Hoạt động') {
+                statusBadge.removeClass('bg-warning text-dark').addClass('active-status').text('Hoạt động');
+                toggleBtn.removeClass('btn-outline-success').addClass('btn-outline-warning');
+                toggleIcon.removeClass('fas fa-unlock').addClass('fas fa-lock');
+                toggleText.text('Khóa tài khoản');
+            } else {
+                statusBadge.removeClass('active-status').addClass('bg-warning text-dark').text('Tạm khóa');
+                toggleBtn.removeClass('btn-outline-warning').addClass('btn-outline-success');
+                toggleIcon.removeClass('fas fa-lock').addClass('fas fa-unlock');
+                toggleText.text('Mở khóa tài khoản');
+            }
+        }
+        
+        function isValidEmail(email) {
+            // Simple email validation to avoid Razor parsing issues
+            if (!email || email.length < 5 || email.length > 100) return false;
+            var parts = email.split('');
+            var hasAt = false;
+            var hasDot = false;
+            for (var i = 0; i < parts.length; i++) {
+                if (parts[i] === '@@') hasAt = true;
+                if (parts[i] === '.') hasDot = true;
+            }
+            return hasAt && hasDot;
+        }
+    </script>
+}
+     

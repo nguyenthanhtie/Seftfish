@@ -1,0 +1,364 @@
+@model Seftfish.Models.SanPham
+@{
+    var danhMucs = (ViewBag.DanhMucs as List<Seftfish.Models.DanhMuc>) ?? new List<Seftfish.Models.DanhMuc>();
+    var isNewProduct = Model.IdSanPham == 0;
+}
+
+<form id="addEditProductForm" method="post" asp-action="AddOrEdit" asp-controller="Sanpham" asp-area="Admin" autocomplete="off">
+    @if (!isNewProduct)
+    {
+        <input type="hidden" name="id" value="@Model.IdSanPham" />
+        <input type="hidden" name="IdSanPham" value="@Model.IdSanPham" />
+    }
+    @Html.AntiForgeryToken()
+    
+    <div class="row">
+        <!-- Cột trái: Thông tin sản phẩm -->
+        <div class="col-md-6">
+            <div class="mb-3">
+                <label for="tenSanPham" class="form-label">Tên sản phẩm</label>
+                <input type="text" id="tenSanPham" name="TenSanPham" class="form-control" value="@Model.TenSanPham" required />
+            </div>
+            <div class="mb-3">
+                <label for="moTa" class="form-label">Mô tả</label>
+                <textarea id="moTa" name="MoTa" class="form-control" rows="4">@Model.MoTa</textarea>
+            </div>
+            <div class="mb-3">
+                <label for="giaBan" class="form-label">Giá bán</label>
+                <div class="input-group">
+                    <input type="number" id="giaBan" name="GiaBan" class="form-control" value="@Model.GiaBan" min="0" step="1000" required />
+                    <span class="input-group-text">VNĐ</span>
+                </div>
+                @if (Model.GiaBan > 0)
+                {
+                    <small class="text-muted">Giá hiện tại: <strong class="text-success">@string.Format("{0:N0}", Model.GiaBan) VNĐ</strong></small>
+                }
+            </div>
+            <div class="mb-3">
+                <label for="danhMuc" class="form-label">Danh mục</label>
+                <select id="danhMuc" name="IdDanhMuc" class="form-select" required>
+                    <option value="">-- Chọn danh mục --</option>
+                    @{
+#pragma warning disable CS8602
+                    }
+                    @foreach (var dm in danhMucs)
+                    {
+                        if (Model.IdDanhMuc == dm.IdDanhMuc)
+                        {
+                            <option value="@dm.IdDanhMuc" selected>@dm.TenDanhMuc</option>
+                        }
+                        else
+                        {
+                            <option value="@dm.IdDanhMuc">@dm.TenDanhMuc</option>
+                        }
+                    }
+                    @{
+#pragma warning restore CS8602
+                    }
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="trangThai" class="form-label">Trạng thái</label>
+                <select id="trangThai" name="TrangThai" class="form-select">
+                    @if (Model.TrangThai == true)
+                    {
+                        <option value="true" selected>Đang bán</option>
+                        <option value="false">Ngừng bán</option>
+                    }
+                    else
+                    {
+                        <option value="true">Đang bán</option>
+                        <option value="false" selected>Ngừng bán</option>
+                    }
+                </select>
+            </div>
+        </div>
+        
+        <!-- Cột phải: Hình ảnh sản phẩm -->
+        <div class="col-md-6">
+            <div class="mb-3">
+                <label class="form-label">Hình ảnh sản phẩm</label>
+                <div class="border p-3 bg-light rounded mb-3">
+                    <input type="file" class="form-control mb-2" id="imageUpload" name="ImageFiles" multiple accept="image/*" />
+                    <small class="text-muted">Chọn nhiều ảnh (Ctrl+Click). Định dạng: JPG, PNG, GIF, WebP. Tối đa 5MB/ảnh.</small>
+                </div>
+
+                <div id="imagePreviewContainer" style="max-height: 400px; overflow-y: auto;">
+                    <div class="row" id="imagePreview">
+                        @if (Model.AnhSanPhams != null && Model.AnhSanPhams.Any())
+                        {
+                            string[] mainImageTypes = new[] { "Chính", "Chinh", "Primary", "Main" };
+                            foreach (var img in Model.AnhSanPhams)
+                            {
+                                var isMainImage = mainImageTypes.Contains(img.LoaiAnh);
+                                <div class="col-md-6 mb-2 image-item" data-url="@img.DuongDan">
+                                    <div class="card h-100">
+                                        <div class="position-relative">
+                                            <img src="@img.DuongDan" class="card-img-top" style="height: 100px; object-fit: cover;" 
+                                                 onerror="this.src='/images/noimage.jpg'" loading="lazy">
+                                            @if (isMainImage)
+                                            {
+                                                <span class="position-absolute top-0 end-0 badge bg-success m-1">Ảnh chính</span>
+                                            }
+                                        </div>
+                                        <div class="card-body p-2">
+                                            <div class="form-check mb-1">
+                                                <input class="form-check-input main-image" type="radio" name="mainImage" value="@img.DuongDan" @(isMainImage ? "checked" : "")>
+                                                <label class="form-check-label small">Ảnh chính</label>
+                                            </div>
+                                            <input type="hidden" name="ExistingImages" value="@img.DuongDan" />
+                                            <button type="button" class="btn btn-sm btn-outline-danger remove-image w-100">
+                                                <i class="fas fa-trash me-1"></i>Xóa
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        }
+                    </div>
+                    <div id="noImagesMessage" class="alert alert-info @(Model.AnhSanPhams != null && Model.AnhSanPhams.Any() ? "d-none" : "")">
+                        <i class="fas fa-info-circle me-2"></i>Chưa có ảnh nào. Hãy thêm ảnh cho sản phẩm.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="text-end mt-3">
+        <button type="button" class="btn btn-secondary me-2" data-bs-dismiss="modal">Hủy</button>
+        <button type="submit" class="btn btn-primary" id="submitBtn">Lưu</button>
+    </div>
+</form>
+
+<script>
+    $(document).ready(function() {
+        $('#tenSanPham').focus();
+        
+        // Ngăn chặn sự kiện click gây ra bubble
+        $('#addEditProductForm input, #addEditProductForm textarea, #addEditProductForm select').on('click', function(e) {
+            e.stopPropagation();
+        });
+
+        // Xử lý định dạng giá khi nhập
+        $('#giaBan').on('input', function() {
+            const value = parseInt($(this).val()) || 0;
+            const $currentPrice = $(this).closest('.mb-3').find('.current-price');
+            
+            if (value > 0) {
+                if ($currentPrice.length === 0) {
+                    $(this).closest('.input-group').after(`
+                        <small class="text-muted current-price">
+                            Giá đang nhập: <strong class="text-primary">${value.toLocaleString('vi-VN')} VNĐ</strong>
+                        </small>
+                    `);
+                } else {
+                    $currentPrice.html(`Giá đang nhập: <strong class="text-primary">${value.toLocaleString('vi-VN')} VNĐ</strong>`);
+                }
+            } else {
+                $currentPrice.remove();
+            }
+        });
+
+        // Focus và select text khi click vào input giá
+        $('#giaBan').on('focus', function() {
+            $(this).select();
+        });
+
+        // Xử lý tải ảnh lên với validation
+        $('#imageUpload').on('change', function(e) {
+            const files = Array.from(e.target.files);
+            if (files.length > 0) {
+                const validFiles = files.filter(file => {
+                    // Kiểm tra loại file
+                    if (!file.type.startsWith('image/')) {
+                        showAlert(`File "${file.name}" không phải là ảnh.`, 'warning');
+                        return false;
+                    }
+                    // Kiểm tra kích thước (5MB)
+                    if (file.size > 5 * 1024 * 1024) {
+                        showAlert(`File "${file.name}" quá lớn. Kích thước tối đa là 5MB.`, 'warning');
+                        return false;
+                    }
+                    // Kiểm tra định dạng
+                    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+                    if (!allowedTypes.includes(file.type)) {
+                        showAlert(`File "${file.name}" không đúng định dạng. Chỉ chấp nhận JPG, PNG, GIF, WebP.`, 'warning');
+                        return false;
+                    }
+                    return true;
+                });
+                
+                // Đọc và hiển thị preview
+                validFiles.forEach((file, index) => {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        addImagePreview(e.target.result, index === 0 && $('.image-item').length === 0);
+                    };
+                    reader.onerror = function() {
+                        showAlert(`Không thể đọc file: ${file.name}`, 'error');
+                    };
+                    reader.readAsDataURL(file);
+                });
+            }
+        });
+
+        // Xử lý xóa ảnh
+        $(document).on('click', '.remove-image', function(e) {
+            e.preventDefault();
+            const $imageItem = $(this).closest('.image-item');
+            const wasMainImage = $imageItem.find('.main-image').is(':checked');
+            
+            $imageItem.remove();
+            
+            // Nếu xóa ảnh chính, tự động chọn ảnh đầu tiên làm ảnh chính
+            if (wasMainImage && $('.image-item').length > 0) {
+                $('.main-image').first().prop('checked', true);
+                updateMainImageIndicators();
+            }
+            
+            updateNoImagesMessage();
+        });
+
+        // Xử lý thay đổi ảnh chính
+        $(document).on('change', '.main-image', function() {
+            updateMainImageIndicators();
+        });
+
+        // Ngăn chặn double-click cho nút submit
+        $('#submitBtn').on('click', function(e) {
+            const $btn = $(this);
+            if ($btn.prop('disabled') || $btn.data('clicking')) {
+                e.preventDefault();
+                e.stopImmediatePropagation();
+                return false;
+            }
+            $btn.data('clicking', true);
+            setTimeout(() => $btn.data('clicking', false), 1000);
+        });
+
+        // Functions
+        function addImagePreview(imageUrl, setAsMain = false) {
+            const imageContainer = $('#imagePreview');
+            
+            const imageItem = $(`
+                <div class="col-md-6 mb-2 image-item" data-url="${imageUrl}">
+                    <div class="card h-100">
+                        <div class="position-relative">
+                            <img src="${imageUrl}" class="card-img-top" style="height: 100px; object-fit: cover;" 
+                                 onerror="this.src='/images/noimage.jpg'" loading="lazy">
+                            <span class="position-absolute top-0 end-0 badge bg-success m-1 main-indicator" style="display: ${setAsMain ? 'block' : 'none'};">Ảnh chính</span>
+                        </div>
+                        <div class="card-body p-2">
+                            <div class="form-check mb-1">
+                                <input class="form-check-input main-image" type="radio" name="mainImage" value="${imageUrl}" ${setAsMain ? 'checked' : ''}>
+                                <label class="form-check-label small">Ảnh chính</label>
+                            </div>
+                            <button type="button" class="btn btn-sm btn-outline-danger remove-image w-100">
+                                <i class="fas fa-trash me-1"></i>Xóa
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `);
+            
+            imageContainer.append(imageItem);
+            updateNoImagesMessage();
+        }
+
+        function updateMainImageIndicators() {
+            $('.main-indicator').hide();
+            $('.main-image:checked').closest('.image-item').find('.main-indicator').show();
+        }
+
+        function updateNoImagesMessage() {
+            const hasImages = $('.image-item').length > 0;
+            $('#noImagesMessage').toggleClass('d-none', hasImages);
+        }
+
+        function showAlert(message, type = 'info') {
+            const alertClass = type === 'error' ? 'alert-danger' : 
+                              type === 'warning' ? 'alert-warning' : 
+                              type === 'success' ? 'alert-success' : 'alert-info';
+            const alertHtml = `<div class="alert ${alertClass} alert-dismissible fade show temp-alert" role="alert">
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>`;
+            
+            // Remove existing temporary alerts only (not the "no images" message)
+            $('.temp-alert').remove();
+            $('#imagePreviewContainer').before(alertHtml);
+            
+            // Auto remove after 5 seconds
+            setTimeout(() => $('.temp-alert').fadeOut(), 5000);
+        }
+
+        // Xử lý form submit - Ngăn chặn submit nhiều lần
+        $('#addEditProductForm').off('submit').on('submit', function(e) {
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            
+            const $form = $(this);
+            const $submitBtn = $form.find('button[type="submit"]');
+            
+            // Kiểm tra nếu đang trong quá trình submit
+            if ($submitBtn.prop('disabled') || $form.data('submitting')) {
+                return false;
+            }
+            
+            if (!this.checkValidity()) {
+                e.stopPropagation();
+                $form.addClass('was-validated');
+                return false;
+            }
+            
+            // Đánh dấu form đang submit
+            $form.data('submitting', true);
+            
+            // Đảm bảo có ảnh chính nếu có ảnh
+            if ($('.image-item').length > 0 && $('.main-image:checked').length === 0) {
+                $('.main-image').first().prop('checked', true);
+            }
+            
+            const originalText = $submitBtn.text();
+            $submitBtn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-2"></span>Đang lưu...');
+            
+            const formData = new FormData(this);
+            
+            $.ajax({
+                url: $form.attr('action'),
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                timeout: 30000, // 30 seconds timeout
+                success: function(response) {
+                    if (response.success) {
+                        showAlert('Lưu sản phẩm thành công!', 'success');
+                        setTimeout(() => {
+                            $('#addEditProductModal').modal('hide');
+                            location.reload();
+                        }, 1000);
+                    } else {
+                        showAlert(response.message || 'Không thể lưu sản phẩm', 'error');
+                    }
+                },
+                error: function(xhr, textStatus, errorThrown) {
+                    let errorMsg = 'Lỗi kết nối máy chủ';
+                    if (textStatus === 'timeout') {
+                        errorMsg = 'Yêu cầu quá thời gian chờ. Vui lòng thử lại.';
+                    } else if (xhr.responseJSON?.message) {
+                        errorMsg = xhr.responseJSON.message;
+                    }
+                    showAlert(errorMsg, 'error');
+                },
+                complete: function() {
+                    // Reset trạng thái form
+                    $form.data('submitting', false);
+                    $submitBtn.prop('disabled', false).text(originalText);
+                }
+            });
+            
+            return false;
+        });
+    });
+</script>

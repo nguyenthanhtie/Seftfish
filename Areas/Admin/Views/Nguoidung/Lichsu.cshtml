@@ -1,0 +1,359 @@
+@model List<Seftfish.Models.DonHang>
+@{
+    ViewData["Title"] = "LỊCH SỬ MUA HÀNG";
+    ViewData["PageTitle"] = "LỊCH SỬ MUA HÀNG";
+    ViewData["SearchPlaceholder"] = "Tìm kiếm đơn hàng...";
+    ViewData["ShowTabs"] = true;
+}
+
+@section TabNavigation {
+    <li class="nav-item me-2" role="presentation">
+        <a class="nav-link" asp-area="Admin" asp-controller="Nguoidung" asp-action="Index" role="tab">
+            <i class="fas fa-users me-2"></i>Danh sách khách hàng
+        </a>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="purchase-history-tab" type="button" role="tab">
+            <i class="fas fa-history me-2"></i>Lịch sử mua hàng
+        </button>
+    </li>
+}
+
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <span>LỊCH SỬ MUA HÀNG</span>
+        <div class="d-flex gap-2">
+            <select class="form-select form-select-sm" id="userFilter" style="width: auto; min-width: 200px;">
+                <option value="">Tất cả khách hàng</option>
+                @foreach (var user in ViewBag.Users ?? new List<dynamic>())
+                {
+                    <option value="@user.Email">@(user.HoTen ?? user.Email)</option>
+                }
+            </select>
+            <select class="form-select form-select-sm" id="statusFilter" style="width: auto;">
+                <option value="">Tất cả trạng thái</option>
+                <option value="Chờ xác nhận">Đang xử lý</option>
+                <option value="Đã xác nhận">Đã xác nhận</option>
+                <option value="Đang giao">Đang giao</option>
+                <option value="Hoàn thành">Đã giao</option>
+                <option value="Đã hủy">Đã hủy</option>
+            </select>
+        </div>
+    </div>
+    <div class="card-body">
+        <table id="orderHistoryTable" class="table table-hover" style="width:100%">
+            <thead>
+                <tr>
+                    <th>Mã đơn hàng</th>
+                    <th>Khách hàng</th>
+                    <th>Email</th>
+                    <th>Ngày đặt</th>
+                    <th>Tổng tiền</th>
+                    <th>Trạng thái</th>
+                    <th>Phương thức TT</th>
+                  
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model != null && Model.Any())
+                {
+                    @foreach (var order in Model)
+                    {
+                        <tr class="order-row" data-order-id="@order.IdDonHang" style="cursor: pointer;">
+                            <td><strong class="text-primary">#@order.IdDonHang</strong></td>
+                            <td><strong>@(order.IdTaiKhoanNavigation?.HoTen ?? "Khách vãng lai")</strong></td>
+                            <td>@(order.IdTaiKhoanNavigation?.Email ?? "N/A")</td>
+                            <td>@(order.NgayDat?.ToString("dd/MM/yyyy HH:mm") ?? "N/A")</td>
+                            <td><strong class="text-success">@(order.TongTien?.ToString("N0") ?? "0") ₫</strong></td>
+                            <td>
+                                @{
+                                    var statusClass = order.TrangThai switch
+                                    {
+                                        "Chờ xác nhận" => "bg-warning text-dark",
+                                        "Đã xác nhận" => "bg-info text-white",
+                                        "Đang giao" => "bg-primary text-white",
+                                        "Hoàn thành" => "bg-success text-white",
+                                        "Đã hủy" => "bg-danger text-white",
+                                        _ => "bg-secondary text-white"
+                                    };
+                                }
+                                <span class="badge @statusClass">@(order.TrangThai ?? "Không xác định")</span>
+                            </td>
+                            <td>@(order.PhuongThucThanhToan ?? "Chưa xác định")</td>
+                            <td onclick="event.stopPropagation();">
+                                @if (order.TrangThai == "Chờ xác nhận")
+                                {
+                                    <button class="btn btn-sm btn-outline-success btn-confirm-order" data-order-id="@order.IdDonHang">
+                                        <i class="fas fa-check"></i>
+                                    </button>
+                                }
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="8" class="text-center">Không có dữ liệu đơn hàng</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+@section Modals {
+    <!-- Order Detail Modal -->
+    <div class="modal fade" id="orderDetailModal" tabindex="-1" aria-labelledby="orderDetailModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="orderDetailModalLabel">Chi tiết đơn hàng #<span id="orderModalId"></span></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6>Thông tin khách hàng</h6>
+                            <table class="table table-sm">
+                                <tr>
+                                    <td><strong>Tên khách hàng:</strong></td>
+                                    <td id="orderCustomerName"></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Email:</strong></td>
+                                    <td id="orderCustomerEmail"></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Địa chỉ giao hàng:</strong></td>
+                                    <td id="orderAddress"></td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>Thông tin đơn hàng</h6>
+                            <table class="table table-sm">
+                                <tr>
+                                    <td><strong>Ngày đặt:</strong></td>
+                                    <td id="orderDate"></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Trạng thái:</strong></td>
+                                    <td><span id="orderStatus" class="badge"></span></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Phương thức thanh toán:</strong></td>
+                                    <td id="orderPaymentMethod"></td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <hr>
+                    
+                    <h6>Chi tiết sản phẩm</h6>
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Sản phẩm</th>
+                                    <th>Biến thể</th>
+                                    <th>Số lượng</th>
+                                    <th>Giá</th>
+                                    <th>Thành tiền</th>
+                                </tr>
+                            </thead>
+                            <tbody id="orderItemsList">
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div class="row mt-3">
+                        <div class="col-md-8"></div>
+                        <div class="col-md-4">
+                            <table class="table table-sm">
+                                <tr>
+                                    <td><strong>Tổng tiền:</strong></td>
+                                    <td class="text-end"><strong id="orderTotal" class="text-success"></strong></td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            console.log('Order history page loaded');
+            
+            // Filter functionality for orders
+            function applyFilters() {
+                var selectedStatus = $('#statusFilter').val().toLowerCase();
+                var selectedUser = $('#userFilter').val().toLowerCase();
+                
+                $('#orderHistoryTable tbody tr').each(function() {
+                    var status = $(this).find('td:eq(5)').text().toLowerCase();
+                    var email = $(this).find('td:eq(2)').text().toLowerCase();
+                    
+                    var statusMatch = selectedStatus === '' || status.indexOf(selectedStatus) > -1;
+                    var userMatch = selectedUser === '' || email.indexOf(selectedUser) > -1;
+                    
+                    if (statusMatch && userMatch) {
+                        $(this).show();
+                    } else {
+                        $(this).hide();
+                    }
+                });
+            }
+            
+            // Apply filters when dropdown values change
+            $('#statusFilter, #userFilter').change(function() {
+                applyFilters();
+            });
+
+            // Click on row to view order detail
+            $('.order-row').click(function() {
+                var orderId = $(this).data('order-id');
+                loadOrderDetail(orderId);
+            });
+
+            // Add hover effect for better UX
+            $('.order-row').hover(
+                function() {
+                    $(this).addClass('table-active');
+                },
+                function() {
+                    $(this).removeClass('table-active');
+                }
+            );
+
+            // Confirm order
+            $('.btn-confirm-order').click(function(e) {
+                e.stopPropagation(); // Prevent row click
+                var orderId = $(this).data('order-id');
+                if (confirm('Bạn có chắc chắn muốn xác nhận đơn hàng này?')) {
+                    confirmOrder(orderId);
+                }
+            });
+            
+            // Load filter data from database
+            loadFilterData();
+        });
+
+        function loadOrderDetail(orderId) {
+            // Show loading state
+            $('#orderModalId').text(orderId);
+            $('#orderCustomerName').text('Đang tải...');
+            $('#orderCustomerEmail').text('Đang tải...');
+            $('#orderAddress').text('Đang tải...');
+            $('#orderDate').text('Đang tải...');
+            $('#orderPaymentMethod').text('Đang tải...');
+            $('#orderTotal').text('Đang tải...');
+            
+            var itemsList = $('#orderItemsList');
+            itemsList.html('<tr><td colspan="5" class="text-center">Đang tải chi tiết sản phẩm...</td></tr>');
+            
+            $('#orderDetailModal').modal('show');
+            
+            // Load order details from server
+            $.ajax({
+                url: '@Url.Action("GetOrderDetail", "Nguoidung", new { area = "Admin" })',
+                type: 'GET',
+                data: { id: orderId },
+                success: function(data) {
+                    // Update modal content
+                    $('#orderModalId').text(data.id);
+                    $('#orderCustomerName').text(data.customerName);
+                    $('#orderCustomerEmail').text(data.customerEmail);
+                    $('#orderAddress').text(data.address);
+                    $('#orderDate').text(data.orderDate);
+                    $('#orderPaymentMethod').text(data.paymentMethod);
+                    $('#orderTotal').text(data.totalAmount);
+                    
+                    // Update status badge
+                    var statusBadge = $('#orderStatus');
+                    statusBadge.removeClass().addClass('badge ' + getStatusClass(data.status));
+                    statusBadge.text(data.status);
+                    
+                    // Update items list
+                    var itemsHtml = '';
+                    if (data.items && data.items.length > 0) {
+                        data.items.forEach(function(item) {
+                            itemsHtml += '<tr>' +
+                                '<td>' + item.productName + '</td>' +
+                                '<td>' + item.variantSku + '</td>' +
+                                '<td>' + item.quantity + '</td>' +
+                                '<td>' + item.price + '</td>' +
+                                '<td>' + item.subTotal + '</td>' +
+                                '</tr>';
+                        });
+                    } else {
+                        itemsHtml = '<tr><td colspan="5" class="text-center">Không có sản phẩm nào</td></tr>';
+                    }
+                    itemsList.html(itemsHtml);
+                },
+                error: function() {
+                    alert('Không thể tải thông tin đơn hàng');
+                }
+            });
+        }
+
+        function confirmOrder(orderId) {
+            // TODO: Implement AJAX call to confirm order
+            // This would require a ConfirmOrder action in DonhangController
+            alert('Chức năng xác nhận đơn hàng sẽ được triển khai sau');
+        }
+
+        function getStatusClass(status) {
+            switch(status) {
+                case 'Đang xử lý': return 'bg-warning text-dark';
+                case 'Đã xác nhận': return 'bg-info text-white';
+                case 'Đang giao': return 'bg-primary text-white';
+                case 'Đã giao': return 'bg-success text-white';
+                case 'Đã hủy': return 'bg-danger text-white';
+                default: return 'bg-secondary text-white';
+            }
+        }
+        
+        // Load filter data from database
+        function loadFilterData() {
+            $.ajax({
+                url: '@Url.Action("GetFilterData", "Nguoidung", new { area = "Admin" })',
+                type: 'GET',
+                success: function(data) {
+                    // Populate user filter
+                    var userFilter = $('#userFilter');
+                    userFilter.empty();
+                    userFilter.append('<option value="">Tất cả khách hàng</option>');
+                    
+                    if (data.users && data.users.length > 0) {
+                        data.users.forEach(function(user) {
+                            userFilter.append('<option value="' + user.email + '">' + 
+                                (user.hoTen || user.email) + '</option>');
+                        });
+                    }
+                    
+                    // Populate status filter
+                    var statusFilter = $('#statusFilter');
+                    statusFilter.empty();
+                    statusFilter.append('<option value="">Tất cả trạng thái</option>');
+                    
+                    if (data.statuses && data.statuses.length > 0) {
+                        data.statuses.forEach(function(status) {
+                            statusFilter.append('<option value="' + status + '">' + status + '</option>');
+                        });
+                    }
+                },
+                error: function() {
+                    console.error('Không thể tải dữ liệu bộ lọc');
+                }
+            });
+        }
+    </script>
+}
