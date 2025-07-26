@@ -227,9 +227,9 @@ D:\code\Seftfish\Seftfish\bin\Debug\net9.0\runtimes\win\lib\net6.0\System.Window
 D:\code\Seftfish\Seftfish\obj\Debug\net9.0\Seftfish.csproj.AssemblyReference.cache
 D:\code\Seftfish\Seftfish\obj\Debug\net9.0\Seftfish.csproj.Up2Date
 d:\code\Seftfish\Seftfish\obj\Debug\net9.0\Seftfish.sourcelink.json
-d:\code\Seftfish\Seftfish\obj\Debug\net9.0\compressed\4t5qr505fv-4iazo4e050.gz
-d:\code\Seftfish\Seftfish\obj\Debug\net9.0\compressed\d03kvd1yzs-aovmfy2t1e.gz
 d:\code\Seftfish\Seftfish\obj\Debug\net9.0\compressed\egsjqev234-2tnd79067v.gz
 d:\code\Seftfish\Seftfish\obj\Debug\net9.0\compressed\k6dmo9xzqi-miu1ftxwx1.gz
-d:\code\Seftfish\Seftfish\obj\Debug\net9.0\compressed\v531sv05ns-41941j6uv3.gz
 d:\code\Seftfish\Seftfish\obj\Debug\net9.0\compressed\4ivdtfjhd4-tthpl7k3ms.gz
+d:\code\Seftfish\Seftfish\obj\Debug\net9.0\compressed\d03kvd1yzs-32qauub48d.gz
+d:\code\Seftfish\Seftfish\obj\Debug\net9.0\compressed\7ongkz8r6e-44602z3fnc.gz
+d:\code\Seftfish\Seftfish\obj\Debug\net9.0\compressed\v531sv05ns-dy6042s1bm.gz

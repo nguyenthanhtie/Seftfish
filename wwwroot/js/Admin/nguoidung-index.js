@@ -93,7 +93,6 @@ function bindCustomerEvents() {
         var isValid = true;
         var email = $('#newCustomerEmail').val();
         var password = $('#newCustomerPassword').val();
-        var role = $('#newCustomerRole').val();
         
         if (!email || !isValidEmail(email)) {
             $('#newCustomerEmail').addClass('is-invalid');
@@ -102,11 +101,6 @@ function bindCustomerEvents() {
         
         if (!password || password.length < 6) {
             $('#newCustomerPassword').addClass('is-invalid');
-            isValid = false;
-        }
-        
-        if (!role) {
-            $('#newCustomerRole').addClass('is-invalid');
             isValid = false;
         }
         

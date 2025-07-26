@@ -32,7 +32,7 @@
     <div class="card-body">
         <div class="table-responsive">
             <table id="customerTable" class="table table-hover table-striped" style="width:100%">
-                <thead class="table-dark">
+                <thead class="table-dark text-center">
                     <tr>
                         <th>ID</th>
                         <th>Ảnh</th>
@@ -48,7 +48,7 @@
                 {
                     @foreach (var customer in Model)
                     {
-                        <tr class="customer-row" data-customer-id="@customer.IdTaiKhoan" style="cursor: pointer;">
+                        <tr class="customer-row text-center" data-customer-id="@customer.IdTaiKhoan" style="cursor: pointer;">
                             <td><strong class="text-primary">@customer.IdTaiKhoan</strong></td>
                             <td>
                                 @if (!string.IsNullOrEmpty(customer.AnhDaiDien))
@@ -57,7 +57,7 @@
                                 }
                                 else
                                 {
-                                    <div class="rounded-circle bg-secondary d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                                    <div class="rounded-circle bg-secondary d-flex align-items-center justify-content-center mx-auto" style="width: 40px; height: 40px;">
                                         <i class="fas fa-user text-white"></i>
                                     </div>
                                 }
@@ -141,16 +141,8 @@
                                         <option value="Khác">Khác</option>
                                     </select>
                                 </div>
-                                <div class="mb-3">
-                                    <label for="newCustomerRole" class="form-label">Vai trò <span class="text-danger">*</span></label>
-                                    <select class="form-select" id="newCustomerRole" name="VaiTro" required>
-                                        <option value="" selected >Chọn vai trò</option>
-                                        <option value="khach">Khách hàng</option>
-                                        <option value="Admin">Quản trị viên</option>
-                                        <option value="Staff">Nhân viên</option>
-                                    </select>
-                                    <div class="invalid-feedback">Vui lòng chọn vai trò.</div>
-                                </div>
+                                <!-- Vai trò mặc định là khách hàng -->
+                                <input type="hidden" id="newCustomerRole" name="VaiTro" value="khach">
                             </div>
                             <div class="col-md-6">
                                 <div class="mb-3">

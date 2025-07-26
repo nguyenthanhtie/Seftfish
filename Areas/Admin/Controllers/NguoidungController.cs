@@ -93,9 +93,9 @@ namespace Seftfish.Areas.Admin.Controllers
             try
             {
                 // Validate input
-                if (string.IsNullOrEmpty(request.Email) || string.IsNullOrEmpty(request.MatKhau) || string.IsNullOrEmpty(request.VaiTro))
+                if (string.IsNullOrEmpty(request.Email) || string.IsNullOrEmpty(request.MatKhau))
                 {
-                    return Json(new { success = false, message = "Email, mật khẩu và vai trò là bắt buộc" });
+                    return Json(new { success = false, message = "Email và mật khẩu là bắt buộc" });
                 }
 
                 // Validate field lengths based on database constraints
@@ -114,12 +114,8 @@ namespace Seftfish.Areas.Admin.Controllers
                     return Json(new { success = false, message = "Vai trò không được vượt quá 20 ký tự" });
                 }
 
-                // Validate allowed roles
-                var allowedRoles = new[] { "khach", "Admin", "Staff" };
-                if (!allowedRoles.Contains(request.VaiTro))
-                {
-                    return Json(new { success = false, message = "Vai trò không hợp lệ" });
-                }
+                // Force role to be customer only
+                request.VaiTro = "khach";
 
                 if (!string.IsNullOrEmpty(request.HoTen) && request.HoTen.Length > 100)
                 {
