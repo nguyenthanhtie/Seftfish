@@ -1,0 +1,236 @@
+@model Seftfish.Areas.Admin.Models.ThongKeViewModel
+@{
+    ViewData["Title"] = "THỐNG KÊ VÀ BÁO CÁO";
+    ViewData["PageTitle"] = "THỐNG KÊ VÀ BÁO CÁO";
+    ViewData["Description"] = "Xem thống kê doanh thu, sản phẩm bán chạy, báo cáo hiệu suất kinh doanh";
+}
+
+<div class="row g-3 mb-4">
+    <!-- Cards thống kê tổng quan -->
+    <div class="col-xl-3 col-md-6">
+        <div class="stat-card bg-primary">
+            <div class="stat-icon">
+                <i class="fas fa-shopping-cart"></i>
+            </div>
+            <div class="stat-content">
+                <h3>@Model.TongDonHang.ToString("N0")</h3>
+                <p>Tổng đơn hàng</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6">
+        <div class="stat-card bg-success">
+            <div class="stat-icon">
+                <i class="fas fa-users"></i>
+            </div>
+            <div class="stat-content">
+                <h3>@Model.TongKhachHang.ToString("N0")</h3>
+                <p>Tổng khách hàng</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6">
+        <div class="stat-card bg-info">
+            <div class="stat-icon">
+                <i class="fas fa-box"></i>
+            </div>
+            <div class="stat-content">
+                <h3>@Model.TongSanPham.ToString("N0")</h3>
+                <p>Tổng sản phẩm</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6">
+        <div class="stat-card bg-warning">
+            <div class="stat-icon">
+                <i class="fas fa-dollar-sign"></i>
+            </div>
+            <div class="stat-content">
+                <h3>@Model.TongDoanhThu.ToString("N0") ₫</h3>
+                <p>Tổng doanh thu</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-3">
+    <!-- Biểu đồ doanh thu -->
+    <div class="col-lg-8">
+        <div class="chart-card">
+            <div class="chart-header">
+                <h6><i class="fas fa-chart-line me-2"></i>Doanh thu theo tháng</h6>
+                <div class="btn-group btn-group-sm">
+                    <button type="button" class="btn btn-outline-primary active" id="btnThang">Tháng</button>
+                    <button type="button" class="btn btn-outline-primary" id="btnTuan">Tuần</button>
+                    <button type="button" class="btn btn-outline-primary" id="btnNgay">Ngày</button>
+                </div>
+            </div>
+            <div class="chart-body">
+                <canvas id="revenueChart" height="80"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Đơn hàng theo trạng thái -->
+    <div class="col-lg-4">
+        <div class="chart-card">
+            <div class="chart-header">
+                <h6><i class="fas fa-chart-pie me-2"></i>Trạng thái đơn hàng</h6>
+            </div>
+            <div class="chart-body">
+                <canvas id="orderStatusChart" height="120"></canvas>
+                <div class="status-list">
+                    @foreach (var item in Model.DonHangTheoTrangThai)
+                    {
+                        var badgeClass = item.TrangThai switch
+                        {
+                            "Đang xử lý" => "warning",
+                            "Đã xác nhận" => "info",
+                            "Đang giao" => "primary",
+                            "Hoàn thành" => "success",
+                            "Đã hủy" => "danger",
+                            _ => "secondary"
+                        };
+                        <div class="status-item">
+                            <span class="status-badge bg-@badgeClass">@item.TrangThai</span>
+                            <span class="status-count">@item.SoLuong</span>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-3 mt-2">
+    <!-- Sản phẩm bán chạy -->
+    <div class="col-lg-6">
+        <div class="chart-card">
+            <div class="chart-header">
+                <h6><i class="fas fa-fire me-2"></i>Sản phẩm bán chạy</h6>
+            </div>
+            <div class="chart-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-sm mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th width="50">#</th>
+                                <th>Sản phẩm</th>
+                                <th width="80" class="text-center">SL</th>
+                                <th width="120" class="text-end">Doanh thu</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for (int i = 0; i < Math.Min(Model.SanPhamBanChay.Count, 8); i++)
+                            {
+                                var item = Model.SanPhamBanChay[i];
+                                <tr>
+                                    <td class="text-center">
+                                        @if (i < 3)
+                                        {
+                                            var medalClass = i switch
+                                            {
+                                                0 => "text-warning",
+                                                1 => "text-secondary", 
+                                                2 => "text-success",
+                                                _ => ""
+                                            };
+                                            <i class="fas fa-medal @medalClass"></i>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">@(i + 1)</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        <div class="product-name">@item.TenSanPham</div>
+                                    </td>
+                                    <td class="text-center">
+                                        <span class="badge bg-primary-subtle text-primary">@item.SoLuongBan</span>
+                                    </td>
+                                    <td class="text-end">
+                                        <span class="fw-semibold text-success">@item.DoanhThu.ToString("N0")₫</span>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Báo cáo hiệu suất -->
+    <div class="col-lg-6">
+        <div class="chart-card">
+            <div class="chart-header">
+                <h6><i class="fas fa-chart-bar me-2"></i>Báo cáo hiệu suất</h6>
+            </div>
+            <div class="chart-body">
+                <div id="performanceReport">
+                    <div class="text-center py-4">
+                        <div class="spinner-border spinner-border-sm text-primary" role="status"></div>
+                        <p class="small text-muted mt-2 mb-0">Đang tải...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Bộ lọc thời gian -->
+<div class="filter-card mt-3">
+    <div class="filter-header">
+        <h6><i class="fas fa-filter me-2"></i>Xuất báo cáo</h6>
+    </div>
+    <div class="filter-body">
+        <div class="row g-3 align-items-end">
+            <div class="col-md-3">
+                <label for="fromDate" class="form-label small">Từ ngày</label>
+                <input type="date" class="form-control form-control-sm" id="fromDate" 
+                       value="@DateTime.Now.AddDays(-30).ToString("yyyy-MM-dd")">
+            </div>
+            <div class="col-md-3">
+                <label for="toDate" class="form-label small">Đến ngày</label>
+                <input type="date" class="form-control form-control-sm" id="toDate" 
+                       value="@DateTime.Now.ToString("yyyy-MM-dd")">
+            </div>
+            <div class="col-md-6">
+                <div class="d-flex gap-2">
+                    <button type="button" class="btn btn-primary btn-sm" id="btnXemBaoCao">
+                        <i class="fas fa-search me-1"></i>Xem báo cáo
+                    </button>
+                    <button type="button" class="btn btn-success btn-sm" id="btnXuatExcel">
+                        <i class="fas fa-file-excel me-1"></i>Xuất Excel
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <script>
+        // URLs for AJAX calls
+        window.thongkeUrls = {
+            getDoanhThuTheoNgay: '@Url.Action("GetDoanhThuTheoNgay", "Thongke", new { area = "Admin" })',
+            getBaoCaoHieuSuat: '@Url.Action("GetBaoCaoHieuSuat", "Thongke", new { area = "Admin" })'
+        };
+
+        // Dữ liệu doanh thu theo tháng từ server
+        const doanhThuTheoThang = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.DoanhThuTheoThang));
+        const donHangTheoTrangThai = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.DonHangTheoTrangThai));
+    </script>
+    
+    <script src="~/js/Admin/thongke-index.js"></script>
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/Admin/thongke.css" asp-append-version="true">
+}

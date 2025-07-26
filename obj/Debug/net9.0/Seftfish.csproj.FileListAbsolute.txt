@@ -233,3 +233,5 @@ d:\code\Seftfish\Seftfish\obj\Debug\net9.0\compressed\4ivdtfjhd4-tthpl7k3ms.gz
 d:\code\Seftfish\Seftfish\obj\Debug\net9.0\compressed\d03kvd1yzs-32qauub48d.gz
 d:\code\Seftfish\Seftfish\obj\Debug\net9.0\compressed\7ongkz8r6e-44602z3fnc.gz
 d:\code\Seftfish\Seftfish\obj\Debug\net9.0\compressed\v531sv05ns-dy6042s1bm.gz
+d:\code\Seftfish\Seftfish\obj\Debug\net9.0\compressed\p9on6pyvkf-12ul158gxz.gz
+d:\code\Seftfish\Seftfish\obj\Debug\net9.0\compressed\4nnw45du3u-91uhiulnrg.gz

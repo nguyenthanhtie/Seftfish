@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Seftfish")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+6cb68143d80375e99f7328a3bcd7dd2f2f1a3c20")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+af518736d253c45943836ce5ae2a7339b90d3121")]
 [assembly: System.Reflection.AssemblyProductAttribute("Seftfish")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Seftfish")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
