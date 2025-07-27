@@ -17,85 +17,85 @@ build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property.RootNamespace = Seftfish
 build_property.RootNamespace = Seftfish
-build_property.ProjectDir = d:\code\Seftfish\Seftfish\
+build_property.ProjectDir = D:\code\Seftfish\Seftfish\
 build_property.EnableComHosting = 
 build_property.EnableGeneratedComInterfaceComImportInterop = 
 build_property.RazorLangVersion = 9.0
 build_property.SupportLocalizedComponentNames = 
 build_property.GenerateRazorMetadataSourceChecksumAttributes = 
-build_property.MSBuildProjectDirectory = d:\code\Seftfish\Seftfish
+build_property.MSBuildProjectDirectory = D:\code\Seftfish\Seftfish
 build_property._RazorSourceGeneratorDebug = 
 build_property.EffectiveAnalysisLevelStyle = 9.0
 build_property.EnableCodeStyleSeverity = 
 
-[d:/code/Seftfish/Seftfish/Areas/Admin/Views/Danhmuc/Index.cshtml]
+[D:/code/Seftfish/Seftfish/Areas/Admin/Views/Danhmuc/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQWRtaW5cVmlld3NcRGFuaG11Y1xJbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[d:/code/Seftfish/Seftfish/Areas/Admin/Views/Donhang/Index.cshtml]
+[D:/code/Seftfish/Seftfish/Areas/Admin/Views/Donhang/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQWRtaW5cVmlld3NcRG9uaGFuZ1xJbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[d:/code/Seftfish/Seftfish/Areas/Admin/Views/Nguoidung/Index.cshtml]
+[D:/code/Seftfish/Seftfish/Areas/Admin/Views/Nguoidung/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQWRtaW5cVmlld3NcTmd1b2lkdW5nXEluZGV4LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[d:/code/Seftfish/Seftfish/Areas/Admin/Views/Nguoidung/Lichsu.cshtml]
+[D:/code/Seftfish/Seftfish/Areas/Admin/Views/Nguoidung/Lichsu.cshtml]
 build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQWRtaW5cVmlld3NcTmd1b2lkdW5nXExpY2hzdS5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[d:/code/Seftfish/Seftfish/Areas/Admin/Views/Sanpham/Index.cshtml]
+[D:/code/Seftfish/Seftfish/Areas/Admin/Views/Sanpham/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQWRtaW5cVmlld3NcU2FucGhhbVxJbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[d:/code/Seftfish/Seftfish/Areas/Admin/Views/Sanpham/_AddEditProductPartial.cshtml]
+[D:/code/Seftfish/Seftfish/Areas/Admin/Views/Sanpham/_AddEditProductPartial.cshtml]
 build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQWRtaW5cVmlld3NcU2FucGhhbVxfQWRkRWRpdFByb2R1Y3RQYXJ0aWFsLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[d:/code/Seftfish/Seftfish/Areas/Admin/Views/Sanpham/_ProductDetailPartial.cshtml]
+[D:/code/Seftfish/Seftfish/Areas/Admin/Views/Sanpham/_ProductDetailPartial.cshtml]
 build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQWRtaW5cVmlld3NcU2FucGhhbVxfUHJvZHVjdERldGFpbFBhcnRpYWwuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[d:/code/Seftfish/Seftfish/Areas/Admin/Views/Shared/_Layout.cshtml]
+[D:/code/Seftfish/Seftfish/Areas/Admin/Views/Shared/_Layout.cshtml]
 build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQWRtaW5cVmlld3NcU2hhcmVkXF9MYXlvdXQuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[d:/code/Seftfish/Seftfish/Areas/Admin/Views/Thongke/Index.cshtml]
+[D:/code/Seftfish/Seftfish/Areas/Admin/Views/Thongke/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQWRtaW5cVmlld3NcVGhvbmdrZVxJbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[d:/code/Seftfish/Seftfish/Areas/Admin/Views/_ViewImports.cshtml]
+[D:/code/Seftfish/Seftfish/Areas/Admin/Views/_ViewImports.cshtml]
 build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQWRtaW5cVmlld3NcX1ZpZXdJbXBvcnRzLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[d:/code/Seftfish/Seftfish/Areas/Admin/Views/_ViewStart.cshtml]
+[D:/code/Seftfish/Seftfish/Areas/Admin/Views/_ViewStart.cshtml]
 build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQWRtaW5cVmlld3NcX1ZpZXdTdGFydC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[d:/code/Seftfish/Seftfish/Views/Home/Index.cshtml]
+[D:/code/Seftfish/Seftfish/Views/Home/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxJbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[d:/code/Seftfish/Seftfish/Views/Home/Privacy.cshtml]
+[D:/code/Seftfish/Seftfish/Views/Home/Privacy.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxQcml2YWN5LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[d:/code/Seftfish/Seftfish/Views/Shared/Error.cshtml]
+[D:/code/Seftfish/Seftfish/Views/Shared/Error.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXEVycm9yLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[d:/code/Seftfish/Seftfish/Views/Shared/_ValidationScriptsPartial.cshtml]
+[D:/code/Seftfish/Seftfish/Views/Shared/_ValidationScriptsPartial.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9WYWxpZGF0aW9uU2NyaXB0c1BhcnRpYWwuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[d:/code/Seftfish/Seftfish/Views/_ViewImports.cshtml]
+[D:/code/Seftfish/Seftfish/Views/_ViewImports.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcX1ZpZXdJbXBvcnRzLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[d:/code/Seftfish/Seftfish/Views/_ViewStart.cshtml]
+[D:/code/Seftfish/Seftfish/Views/_ViewStart.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcX1ZpZXdTdGFydC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[d:/code/Seftfish/Seftfish/Views/Shared/_Layout.cshtml]
+[D:/code/Seftfish/Seftfish/Views/Shared/_Layout.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9MYXlvdXQuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = b-cj6rc339es
