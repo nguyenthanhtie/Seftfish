@@ -17,6 +17,57 @@
         border-color: #86b7fe;
         box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
     }
+
+    /* Cố định kích thước cột */
+    #orderTable {
+        table-layout: fixed;
+    }
+    
+    #orderTable th:nth-child(1),
+    #orderTable td:nth-child(1) {
+        width: 15%; /* Mã đơn hàng */
+    }
+    
+    #orderTable th:nth-child(2),
+    #orderTable td:nth-child(2) {
+        width: 25%; /* Khách hàng */
+    }
+    
+    #orderTable th:nth-child(3),
+    #orderTable td:nth-child(3) {
+        width: 20%; /* Ngày đặt */
+    }
+    
+    #orderTable th:nth-child(4),
+    #orderTable td:nth-child(4) {
+        width: 20%; /* Tổng tiền */
+    }
+    
+    #orderTable th:nth-child(5),
+    #orderTable td:nth-child(5) {
+        width: 20%; /* Trạng thái */
+    }
+
+    /* Đảm bảo text không bị tràn */
+    #orderTable td {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        text-align: center;
+        vertical-align: middle;
+    }
+
+    /* Căn giữa header */
+    #orderTable th {
+        text-align: center;
+        vertical-align: middle;
+    }
+
+    /* Cho phép text trong cột khách hàng xuống dòng và căn trái */
+    #orderTable td:nth-child(2) {
+        white-space: normal;
+        text-align: left;
+    }
 </style>
 
 <div class="card">
@@ -36,7 +87,7 @@
     </div>
     <div class="card-body">
         <table id="orderTable" class="table table-hover" style="width:100%">
-             <thead class="table-dark text-center">
+             <thead class="table-dark">
                 <tr>
                     <th>Mã đơn hàng</th>
                     <th>Khách hàng</th>
